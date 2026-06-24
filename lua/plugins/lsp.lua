@@ -9,10 +9,10 @@ return {
           before_init = function(_, config)
             local function get_python_path()
               -- 1. Check if a virtual/conda env is explicitly active in the terminal
-              if vim.env.CONDA_PREFIX then
-                return vim.env.CONDA_PREFIX .. "/bin/python"
-              elseif vim.env.VIRTUAL_ENV then
+              if vim.env.VIRTUAL_ENV then
                 return vim.env.VIRTUAL_ENV .. "/bin/python"
+              elseif vim.env.CONDA_PREFIX then
+                return vim.env.CONDA_PREFIX .. "/bin/python"
               end
               -- 2. Fallback to active terminal python path
               return vim.fn.exepath("python3") or vim.fn.exepath("python") or "python"
