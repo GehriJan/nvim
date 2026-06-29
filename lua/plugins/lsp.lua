@@ -77,4 +77,26 @@ return {
     },
     opts_extend = { "sources.default" },
   },
+  {
+    "rachartier/tiny-inline-diagnostic.nvim",
+    event = "VeryLazy",
+    priority = 1000,
+    config = function()
+      require("tiny-inline-diagnostic").setup({
+        preset = "modern",
+        options = {
+          overflow = { mode = "wrap" },
+          multilines = {
+            enabled = true,
+            always_show = true,
+            severity = { vim.diagnostic.severity.ERROR },
+          },
+          show_all_diags_on_cursorline = true,
+        },
+      })
+      vim.diagnostic.config({
+        virtual_text = false, -- Turn off standard virtual text to prevent duplicates
+      })
+    end,
+  },
 }
