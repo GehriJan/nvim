@@ -85,6 +85,7 @@ return {
       require("tiny-inline-diagnostic").setup({
         preset = "modern",
         options = {
+          show_only_when_cursor = true,
           overflow = { mode = "wrap" },
           multilines = {
             enabled = true,
@@ -95,7 +96,7 @@ return {
         },
       })
       vim.diagnostic.config({
-        virtual_text = false, -- Turn off standard virtual text to prevent duplicates
+        virtual_text = false,
       })
     end,
   },
