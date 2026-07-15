@@ -37,6 +37,8 @@ return {
           },
         },
       },
+      diagnostics = {
+        virtual_text = false, -- Disables virtual text for diagnostics, as we are using tiny-inline-diagnostic.nvim for inline diagnostics
       },
     },
   },
@@ -117,16 +119,25 @@ return {
       require("tiny-inline-diagnostic").setup({
         preset = "modern",
         options = {
-          show_only_when_cursor = true,
+          -- Set to false so warnings/hints do not show on non-cursor lines.
+          -- When false, only severities defined under multilines.severity will be always visible.
+          show_only_when_cursor = false,
           overflow = { mode = "wrap" },
           multilines = {
             enabled = true,
             always_show = true,
-            severity = { vim.diagnostic.severity.ERROR },
+            -- Only severities listed here will remain permanently visible on all lines
+            severity = {
+              vim.diagnostic.severity.ERROR,
+            },
           },
+          -- This ensures that when your cursor lands on a line,
+          -- it shows all other diagnostics (warnings, hints, info) for that line.
           show_all_diags_on_cursorline = true,
         },
       })
+
+      -- Disable Neovim's default virtual text to avoid duplicate diagnostic rendering
       vim.diagnostic.config({
         virtual_text = false,
       })
