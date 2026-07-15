@@ -30,6 +30,13 @@ return {
             },
           },
         },
+        ["*"] = {
+          keys = {
+            -- Disable the default Insert-mode signature help on <C-k>
+            { "<C-k>", false, mode = "i" },
+          },
+        },
+      },
       },
     },
   },
@@ -60,7 +67,32 @@ return {
       -- C-k: Toggle signature help (if signature.enabled = true)
       --
       -- See :h blink-cmp-config-keymap for defining your own keymap
-      keymap = { preset = "super-tab" },
+      keymap = {
+        preset = "none",
+        ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+        ["<Esc>"] = { "hide", "fallback" },
+        ["<CR>"] = { "accept", "fallback" },
+
+        -- Select options using C-j and C-k
+        ["<C-j>"] = { "select_next", "fallback" },
+        ["<C-k>"] = { "select_prev", "fallback" },
+
+        -- Use Tab to select (accept) or fallback to jumping forward in snippets
+        ["<Tab>"] = { "accept", "snippet_forward", "fallback" },
+        ["<S-Tab>"] = { "snippet_backward", "fallback" },
+
+        -- Scroll documentation windows
+        ["<C-d>"] = { "scroll_documentation_down", "fallback" },
+        ["<C-u>"] = { "scroll_documentation_up", "fallback" },
+      },
+      completion = {
+        list = {
+          selection = {
+            preselect = false, -- Prevents Enter from auto-selecting if you haven't navigated[...](asc_slot://start-slot-14)
+            auto_insert = false, -- Won't insert text until you explicitly select
+          },
+        },
+      },
 
       -- Default list of enabled providers defined so that you can extend it
       -- elsewhere in your config, without redefining it, due to `opts_extend`
