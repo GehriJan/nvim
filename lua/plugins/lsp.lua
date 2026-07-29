@@ -90,7 +90,7 @@ return {
       completion = {
         list = {
           selection = {
-            preselect = false, -- Prevents Enter from auto-selecting if you haven't navigated[...](asc_slot://start-slot-14)
+            preselect = true, -- Prevents Enter from auto-selecting if you haven't navigated
             auto_insert = false, -- Won't insert text until you explicitly select
           },
         },
