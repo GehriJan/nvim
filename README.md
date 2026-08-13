@@ -6,11 +6,9 @@ My Neovim configuration built on top of the [LazyVim](https://github.com/LazyVim
 
 ## ✨ Features
 
-### 🤖 AI-Assisted Development (`plugins/ai/`)
+### 🤖 AI-Assisted Development (`plugins/codecompanion.lua`)
 
-- **GitHub Copilot:** Seamless inline auto-completions and code suggestions.
-- **Ollama:** Integration for local, private Large Language Models.
-- **OpenCode:** Tailored code intelligence extensions.
+- **CodeCompanion:** Unified AI integration featuring robust chat, inline editing, and agentic workflows, powered by Copilot
 
 ### 🐙 GitHub Integration (`plugins/api/`)
 
