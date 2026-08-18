@@ -1,6 +1,9 @@
 return {
   "renerocksai/telekasten.nvim",
-  dependencies = { "nvim-telescope/telescope.nvim" },
+  dependencies = {
+    "nvim-telescope/telescope.nvim",
+    "renerocksai/calendar-vim",
+  },
   opts = {
     home = vim.fn.expand("~/src/notes"), -- Change this to your notes directory
     -- Add any other custom settings here!
@@ -9,6 +12,14 @@ return {
     -- Associate default templates for automatic note creation
     template_new_note = vim.fn.expand("~/src/notes/templates/new_note.md"),
     template_new_daily = vim.fn.expand("~/src/notes/templates/daily_note.md"),
+
+    -- Calendar Integration settings
+    plug_into_calendar = true,
+    calendar_opts = {
+      weeknm = 4,
+      calendar_monday = 1,
+      calendar_mark = "left-fit",
+    },
   },
   keys = {
     -- Launch panel (the command palette) if nothing is typed after <leader>z
