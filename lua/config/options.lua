@@ -5,6 +5,13 @@ vim.g.snacks_animate = false
 vim.opt.colorcolumn = "100"
 vim.opt.spell = true
 vim.opt.spelllang = { "de", "en" }
+
+-- Backup Strategy Options
+vim.opt.backup = true
+vim.opt.writebackup = true
+vim.opt.backupdir = "/tmp"
+vim.opt.backupskip = { "/tmp/*", "/private/tmp/*" }
+vim.opt.directory = "/tmp"
 -- Automatically open the LazyVim dashboard when all buffers are closed
 -- source: https://github.com/LazyVim/LazyVim/discussions/3901#discussioncomment-13380900
 vim.api.nvim_create_autocmd("BufDelete", {
