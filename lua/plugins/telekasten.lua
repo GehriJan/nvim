@@ -34,5 +34,57 @@ return {
     { "<leader>zc", "<cmd>Telekasten show_calendar<cr>", desc = "Show Calendar" },
     { "<leader>zb", "<cmd>Telekasten show_backlinks<cr>", desc = "Show Backlinks" },
     { "<leader>zI", "<cmd>Telekasten insert_img_link<cr>", desc = "Insert Image Link" },
+    {
+      "<leader>zm",
+      function()
+        vim.ui.input({ prompt = "Meeting Title: " }, function(input)
+          if not input or input == "" then
+            return
+          end
+
+          local home = vim.fn.expand("~/src/notes")
+          local template_path = home .. "/templates/meetings_note.md"
+          local date = os.date("%Y-%m-%d")
+          local time = os.date("%H:%M")
+
+          -- Clean title for filename: replace spaces with hyphens
+          local clean_title = input:gsub("%s+", "-")
+          local filename = date .. "-" .. clean_title .. ".md"
+          local filepath = home .. "/meetings/" .. filename
+
+          -- Read template content
+          local template_file = io.open(template_path, "r")
+          if not template_file then
+            vim.notify("Could not open meeting template at " .. template_path, vim.log.levels.ERROR)
+            return
+          end
+          local content = template_file:read("*a")
+          template_file:close()
+
+          -- Substitute variables
+          local function safe_replace(str, placeholder, replacement)
+            local escaped_replacement = replacement:gsub("%%", "%%%%")
+            return str:gsub(placeholder, escaped_replacement)
+          end
+
+          content = safe_replace(content, "{{date}}", date)
+          content = safe_replace(content, "{{time}}", time)
+          content = safe_replace(content, "{{shorttitle}}", input)
+
+          -- Write new note
+          local file = io.open(filepath, "w")
+          if not file then
+            vim.notify("Could not create meeting note at " .. filepath, vim.log.levels.ERROR)
+            return
+          end
+          file:write(content)
+          file:close()
+
+          -- Open the newly created note
+          vim.cmd("edit " .. vim.fn.fnameescape(filepath))
+        end)
+      end,
+      desc = "Create Meeting Note",
+    },
   },
 }
