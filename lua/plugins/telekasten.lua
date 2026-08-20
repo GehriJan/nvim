@@ -30,6 +30,7 @@ return {
     { "<leader>zd", "<cmd>Telekasten goto_today<cr>", desc = "Go to Today's Note" },
     { "<leader>zz", "<cmd>Telekasten follow_link<cr>", desc = "Follow Link" },
     { "<leader>zn", "<cmd>Telekasten new_note<cr>", desc = "Create New Note" },
+    { "<leader>zt", "<cmd>Telekasten new_templated_note<cr>", desc = "Create New Templated Note" },
     { "<leader>zc", "<cmd>Telekasten show_calendar<cr>", desc = "Show Calendar" },
     { "<leader>zb", "<cmd>Telekasten show_backlinks<cr>", desc = "Show Backlinks" },
     { "<leader>zI", "<cmd>Telekasten insert_img_link<cr>", desc = "Insert Image Link" },
