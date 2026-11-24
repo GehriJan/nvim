@@ -4,21 +4,76 @@ return {
     opts = {
       servers = {
         pyright = {
-          -- This prevents pyright from running too early
-          -- and forces it to fetch the path when the server initializes
+          -- Automatically resolve python path for pyright:
+          -- Prioritizes local project virtual environments (uv, poetry, venv),
+          -- then active virtual/conda environments, and finally system python.
           before_init = function(_, config)
-            local function get_python_path()
-              -- 1. Check if a virtual/conda env is explicitly active in the terminal
-              if vim.env.VIRTUAL_ENV then
-                return vim.env.VIRTUAL_ENV .. "/bin/python"
-              elseif vim.env.CONDA_PREFIX then
-                return vim.env.CONDA_PREFIX .. "/bin/python"
+            local is_win = vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1
+            local py_binary = is_win and "Scripts/python.exe" or "bin/python"
+
+            local function find_py(dir)
+              if not dir or dir == "" then
+                return nil
               end
-              -- 2. Fallback to active terminal python path
-              return vim.fn.exepath("python3") or vim.fn.exepath("python") or "python"
+              local py = vim.fs.joinpath(dir, py_binary)
+              if vim.fn.executable(py) == 1 then
+                return py
+              end
+              return nil
             end
 
-            config.settings.python.pythonPath = get_python_path()
+            local function get_python_path()
+              -- 1. Check workspace root and current buffer for a local virtual environment (.venv)
+              -- Native uv, poetry, etc. store the environment in .venv at project root
+              local root = config and config.root_dir or vim.fn.getcwd()
+              local bufname = vim.api.nvim_buf_get_name(0)
+              local search_start = (bufname ~= "" and vim.fs.dirname(bufname)) or root
+
+              local venv_dirs = vim.fs.find(
+                { ".venv", "venv" },
+                { path = search_start, upward = true, type = "directory" }
+              )
+              for _, venv in ipairs(venv_dirs) do
+                local py = find_py(venv)
+                if py then
+                  -- Synchronize Neovim environment variables so terminals, formatters, and ruff pick it up
+                  vim.env.VIRTUAL_ENV = venv
+                  local bin_dir = vim.fs.joinpath(venv, is_win and "Scripts" or "bin")
+                  if not (vim.env.PATH or ""):find(bin_dir, 1, true) then
+                    vim.env.PATH = bin_dir .. ":" .. (vim.env.PATH or "")
+                  end
+                  return py, venv
+                end
+              end
+
+              -- 2. Check if a virtual env is explicitly active in the terminal / session
+              if vim.env.VIRTUAL_ENV then
+                local py = find_py(vim.env.VIRTUAL_ENV)
+                if py then
+                  return py, vim.env.VIRTUAL_ENV
+                end
+              end
+
+              -- 3. Check if a conda env is explicitly active
+              if vim.env.CONDA_PREFIX then
+                local py = find_py(vim.env.CONDA_PREFIX)
+                if py then
+                  return py, nil
+                end
+              end
+
+              -- 4. Fallback to active terminal python path
+              return vim.fn.exepath("python3") or vim.fn.exepath("python") or "python", nil
+            end
+
+            local python_path, venv_dir = get_python_path()
+            config.settings = config.settings or {}
+            config.settings.python = config.settings.python or {}
+            config.settings.python.pythonPath = python_path
+            if venv_dir then
+              config.settings.python.venvPath = vim.fs.dirname(venv_dir)
+              config.settings.python.venv = vim.fs.basename(venv_dir)
+            end
           end,
           settings = {
             python = {
